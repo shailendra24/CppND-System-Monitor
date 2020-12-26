@@ -148,8 +148,9 @@ int LinuxParser::TotalProcesses() {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> val && captured != 1) {
-        if (key == "processes") {
-          totalProcs = stoi(val);
+        if (std::all_of(val.begin(), val.end(), isdigit)&&key == "processes") {
+          
+          totalProcs = std::stoi(val);
           captured += 1;
         }
       }
@@ -167,8 +168,8 @@ int LinuxParser::RunningProcesses() {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> val && captured != 1) {
-        if (key == "procs_running") {
-          runningProcs = stoi(val);
+        if (std::all_of(val.begin(), val.end(), isdigit)&&key == "procs_running") {
+          runningProcs = std::stoi(val);
           captured += 1;
         }
       }
@@ -181,7 +182,7 @@ float LinuxParser::CpuUtilization(int pid) {
   string temp, line;
   float utime, stime, cutime, cstime, starttime, total_time, seconds;
   int i = 0;
-  std::ifstream filestream(kProcDirectory + std::to_string(pid) +
+  std::ifstream filestream(kProcDirectory +"/"+ std::to_string(pid) +
                            kStatFilename);
   if (filestream.is_open()) {
     std::getline(filestream, line);
@@ -221,7 +222,8 @@ string LinuxParser::Command(int pid) {
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) {
   string line, key, val;
-  std::ifstream filestream(kProcDirectory + std::to_string(pid) +
+
+  std::ifstream filestream(kProcDirectory+"/" + std::to_string(pid) +
                            kStatusFilename);
   if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
@@ -275,7 +277,7 @@ string LinuxParser::User(int pid) {
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::UpTime(int pid) {
   string line, temp;
-  std::ifstream filestream(kProcDirectory + std::to_string(pid) +
+  std::ifstream filestream(kProcDirectory+"/" + std::to_string(pid) +
                            kStatFilename);
   int i = 0;
   if (filestream.is_open()) {
